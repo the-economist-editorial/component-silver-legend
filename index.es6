@@ -5,8 +5,11 @@ import React from 'react';
 export default class SilverLegend extends React.Component {
 
   // PROP TYPES
+  // I assume we'll have a config object... eventually
   static get propTypes() {
     return {
+      config: React.PropTypes.object,
+      test: React.PropTypes.string,
     };
   }
 
@@ -24,11 +27,77 @@ export default class SilverLegend extends React.Component {
     };
   }
 
+  componentDidMount() {
+    // if (this.props.config.seriesCount > 1) {
+    //   console.log(this.props.config.seriesCount);
+    this.updateLegend();
+    // }
+  }
+
+  componentDidUpdate() {
+    this.updateLegend();
+  }
+
+  // UPDATE LEGEND
+  updateLegend() {
+    const config = this.props.config;
+    // If there's only one series, force the data to an empty array. So
+    // the group always exists, but no content is appended. (This to
+    // make sure the group always exists and prevent it drifting in from
+    // 0,0 every time it's re-created...
+    let data = [];
+    if (config.seriesCount > 1) {
+      data = config.legendArray;
+    }
+    // Context (parent group created in render)
+    const legendGroup = Dthree.select('.chart-legend-group');
+    // legendGroup
+    //  .attr('transform', 'translate(0, 0)');
+    // Bind legends array to group
+    const legendGroupBinding = legendGroup.selectAll('.key-group')
+      .data(data);
+    // Enter, appending class
+    const legendGroupsEnter = legendGroupBinding.enter().append('g')
+      .attr('class', (ddd, iii) => {
+        return `key-group key-${iii}`;
+      })
+      ;
+    legendGroupsEnter.append('rect')
+      .attr({
+        'class': 'd3-key-rect',
+        'x': 0,
+        'y': (ddd, iii) => {
+          return 10 * iii;
+        },
+      })
+      ;
+
+    legendGroupsEnter.append('text')
+      .attr({
+        'class': 'd3-key-text',
+        'x': 7,
+        'y': (ddd, iii) => {
+          return ((10 * iii) + 5);
+        },
+      })
+      ;
+
+    // UPDATE
+    legendGroupBinding.select('rect')
+      .style('fill', (ddd) => ddd.colour)
+      ;
+    legendGroupBinding.select('text')
+      .text((ddd) => ddd.string)
+      ;
+    // Exit
+    legendGroupBinding.exit().remove();
+  }
+  // UPDATE LEGEND ends
+
   // RENDER
   render() {
-    console.log('Legend!');
     return (
-      <div className="tempdiv">Legends</div>
+      <g className="chart-legend-group"/>
     );
   }
 }

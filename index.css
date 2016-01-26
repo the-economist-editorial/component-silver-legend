@@ -1,3 +1,11 @@
-.tempdiv {
-  color: #f00;
+.d3-key-rect {
+  width: 5px;
+  height: 5px;
+  strokewidth: 0;
+}
+.d3-key-text {
+  strokewidth: 0;
+  font-family: 'OfficinaSanITC-Book';
+  font-size: 9px;
+  text-anchor: start;
 }
