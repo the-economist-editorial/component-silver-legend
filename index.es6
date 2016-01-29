@@ -47,12 +47,13 @@ export default class SilverLegend extends React.Component {
     // 0,0 every time it's re-created...
     let data = [];
     if (config.seriesCount > 1) {
-      data = config.legendArray;
+      data = config.legend.data;
     }
+    const lineHeight = config.legend.lineHeight;
+    const keyHeight = config.legend.keyHeight;
+    const keyWidth = config.legend.keyWidth;
     // Context (parent group created in render)
     const legendGroup = Dthree.select('.chart-legend-group');
-    // legendGroup
-    //  .attr('transform', 'translate(0, 0)');
     // Bind legends array to group
     const legendGroupBinding = legendGroup.selectAll('.key-group')
       .data(data);
@@ -67,8 +68,10 @@ export default class SilverLegend extends React.Component {
         'class': 'd3-key-rect',
         'x': 0,
         'y': (ddd, iii) => {
-          return 10 * iii;
+          return lineHeight * iii;
         },
+        'height': keyHeight,
+        'width': keyWidth,
       })
       ;
 
@@ -77,7 +80,8 @@ export default class SilverLegend extends React.Component {
         'class': 'd3-key-text',
         'x': 7,
         'y': (ddd, iii) => {
-          return ((10 * iii) + 5);
+          // To align text baseline, use key rect height:
+          return ((lineHeight * iii) + keyHeight);
         },
       })
       ;
@@ -95,6 +99,7 @@ export default class SilverLegend extends React.Component {
   // UPDATE LEGEND ends
 
   // RENDER
+  // <rect className="legend-fill-rect"/>
   render() {
     return (
       <g className="chart-legend-group"/>
